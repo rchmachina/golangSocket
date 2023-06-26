@@ -1,13 +1,15 @@
 package main
 
 import (
+	//"encoding/json"
 	"fmt"
-	"github.com/gorilla/websocket"
-	gubrak "github.com/novalagung/gubrak/v2"
 	"io/ioutil"
 	"log"
 	"net/http"
 	"strings"
+
+	"github.com/gorilla/websocket"
+	gubrak "github.com/novalagung/gubrak/v2"
 )
 
 type M map[string]interface{}
@@ -22,7 +24,7 @@ type SocketPayLoad struct {
 	Message string
 }
 
-type SocketRespones struct {
+type SocketResponse struct {
 	From    string
 	Type    string
 	Message string
@@ -33,7 +35,11 @@ type WebSocketConnection struct {
 	Username string
 }
 
+
+
 func main() {
+
+
 	http.HandleFunc("/", func(w http.ResponseWriter, r *http.Request) {
 		content, err := ioutil.ReadFile("index.html")
 		if err != nil {
@@ -41,6 +47,7 @@ func main() {
 			return
 		}
 		fmt.Fprintf(w, "%s", content)
+
 	})
 
 	http.HandleFunc("/ws", func(w http.ResponseWriter, r *http.Request) {
@@ -90,9 +97,9 @@ func broadcastMessage(currentConn *WebSocketConnection, kind, message string) {
 		if eachConn == currentConn {
 			continue
 		}
-		eachConn.WriteJSON(SocketRespones{
-			From: currentConn.Username,
-			Type : kind,
+		eachConn.WriteJSON(SocketResponse{
+			From:    currentConn.Username,
+			Type:    kind,
 			Message: message,
 		})
 	}
